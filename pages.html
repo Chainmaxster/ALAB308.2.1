@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plant Growth Control System</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+    }
+    #output {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Plant Growth Control System</h1>
+  <form id="weeksForm">
+    <label for="weeks">Enter the number of weeks:</label>
+    <input type="number" id="weeks" name="weeks" min="1" max="10" required>
+    <button type="submit">Submit</button>
+  </form>
+  <div id="output"></div>
+
+  <script>
+    const PI = 3.1415;
+    const radius = 5;
+    const minSpacePerPlant = 0.8;
+    let plantCount = 20;
+    const maxCapacity = PI * radius * radius / minSpacePerPlant;
+
+    function calculatePlantGrowth(weeks) {
+      const finalPlantCount = plantCount * Math.pow(2, weeks);
+      let status = "";
+
+      if (finalPlantCount > 0.8 * maxCapacity) {
+        status = "Prune the plants to prevent overcrowding.";
+      } else if (finalPlantCount > 0.5 * maxCapacity) {
+        status = "Continue monitoring the plant growth.";
+      } else {
+        status = "There is room to plant more plants.";
+      }
+
+      return { finalPlantCount, status };
+    }
+
+    function displayResults(weeks) {
+      const { finalPlantCount, status } = calculatePlantGrowth(weeks);
+      const outputDiv = document.getElementById("output");
+      outputDiv.innerHTML = `<p>After ${weeks} weeks, there will be ${finalPlantCount} plants.</p><p>${status}</p>`;
+    }
+
+    const form = document.getElementById("weeksForm");
+    form.addEventListener("submit", function(event) {
+      event.preventDefault();
+      const weeks = parseInt(document.getElementById("weeks").value);
+      displayResults(weeks);
+    });
+
+    // Part 2: Determining additional space required
+    const additionalPlants = 100 - plantCount;
+    const additionalSpace = additionalPlants * minSpacePerPlant;
+
+    // New radius for expanded garden
+    const newMaxCapacity = maxCapacity + additionalSpace;
+    const newRadius = Math.sqrt(newMaxCapacity / PI);
+
+    try {
+      if (additionalPlants > 0 && newMaxCapacity > maxCapacity) {
+        throw new Error(`Additional space required: ${additionalSpace} square meters. New radius: ${newRadius.toFixed(2)} meters.`);
+      }
+    } catch (error) {
+      console.error(error.message);
+    }
+
+    // Part 3: Error handling for starting with 100 plants
+    try {
+      const newPlantCount = 100;
+      const newFinalPlantCount = newPlantCount * Math.pow(2, 10); // Assuming 10 weeks
+      const newMaxCapacityError = PI * radius * radius / minSpacePerPlant;
+      if (newFinalPlantCount > newMaxCapacityError) {
+        throw new Error("Insufficient space to accommodate 100 plants in the original garden.");
+      }
+    } catch (error) {
+      console.error(error.message);
+    }
+  </script>
+</body>
+</html>
